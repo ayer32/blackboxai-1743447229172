@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Statistics - Cricket Tournament Manager</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Sidebar -->
+    <div class="fixed inset-y-0 left-0 w-64 bg-indigo-700 text-white">
+        <div class="flex items-center justify-center h-16 bg-indigo-800">
+            <i class="fas fa-cricket text-2xl mr-2"></i>
+            <span class="font-bold text-xl">Cricket Manager</span>
+        </div>
+        <nav class="mt-5">
+            <a href="dashboard.html" class="flex items-center px-6 py-3 text-white hover:bg-indigo-600">
+                <i class="fas fa-tachometer-alt mr-3"></i>
+                Dashboard
+            </a>
+            <a href="tournaments.html" class="flex items-center px-6 py-3 text-white hover:bg-indigo-600">
+                <i class="fas fa-trophy mr-3"></i>
+                Tournaments
+            </a>
+            <a href="teams.html" class="flex items-center px-6 py-3 text-white hover:bg-indigo-600">
+                <i class="fas fa-users mr-3"></i>
+                Teams
+            </a>
+            <a href="players.html" class="flex items-center px-6 py-3 text-white hover:bg-indigo-600">
+                <i class="fas fa-running mr-3"></i>
+                Players
+            </a>
+            <a href="matches.html" class="flex items-center px-6 py-3 text-white hover:bg-indigo-600">
+                <i class="fas fa-baseball-ball mr-3"></i>
+                Matches
+            </a>
+            <a href="statistics.html" class="flex items-center px-6 py-3 bg-indigo-600">
+                <i class="fas fa-chart-bar mr-3"></i>
+                Statistics
+            </a>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="ml-64 p-8">
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-8">
+            <h1 class="text-2xl font-bold text-gray-800">Statistics</h1>
+            <div class="flex space-x-4">
+                <select id="tournamentSelect" class="border rounded-md px-3 py-2">
+                    <option value="">All Tournaments</option>
+                </select>
+                <button id="exportStatsBtn" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-500">
+                    Export Stats
+                </button>
+            </div>
+        </div>
+
+        <!-- Stats Overview -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <!-- Batting Stats -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">Top Run Scorers</h3>
+                <div class="space-y-4" id="topBatsmen">
+                    <!-- Top batsmen will be dynamically added here -->
+                </div>
+            </div>
+
+            <!-- Bowling Stats -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">Top Wicket Takers</h3>
+                <div class="space-y-4" id="topBowlers">
+                    <!-- Top bowlers will be dynamically added here -->
+                </div>
+            </div>
+
+            <!-- Team Performance -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">Team Win Rates</h3>
+                <div class="space-y-4" id="teamWinRates">
+                    <!-- Team win rates will be dynamically added here -->
+                </div>
+            </div>
+
+            <!-- Tournament Stats -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">Tournament Overview</h3>
+                <div class="space-y-4" id="tournamentStats">
+                    <!-- Tournament stats will be dynamically added here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <!-- Run Distribution Chart -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">Run Distribution</h3>
+                <canvas id="runDistributionChart"></canvas>
+            </div>
+
+            <!-- Wicket Distribution Chart -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">Wicket Distribution</h3>
+                <canvas id="wicketDistributionChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Detailed Stats Tables -->
+        <div class="space-y-8">
+            <!-- Batting Stats Table -->
+            <div class="bg-white rounded-lg shadow overflow-hidden">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h3 class="text-lg font-semibold text-gray-800">Batting Statistics</h3>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Player</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Matches</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Runs</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Average</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Strike Rate</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">50s</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">100s</th>
+                            </tr>
+                        </thead>
+                        <tbody id="battingStatsTable" class="bg-white divide-y divide-gray-200">
+                            <!-- Batting stats rows will be dynamically added here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Bowling Stats Table -->
+            <div class="bg-white rounded-lg shadow overflow-hidden">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h3 class="text-lg font-semibold text-gray-800">Bowling Statistics</h3>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Player</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Matches</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Wickets</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Average</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Economy</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Best Bowling</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bowlingStatsTable" class="bg-white divide-y divide-gray-200">
+                            <!-- Bowling stats rows will be dynamically added here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+    <script>
+        // Check authentication
+        if (!window.auth.isAuthenticated()) {
+            window.location.href = 'index.html';
+        }
+
+        // Fetch and display statistics
+        async function fetchStatistics() {
+            try {
+                const token = localStorage.getItem('token');
+                const tournamentId = document.getElementById('tournamentSelect').value;
+                const url = `http://localhost:5000/api/statistics${tournamentId ? `?tournament=${tournamentId}` : ''}`;
+                
+                const response = await fetch(url, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const stats = await response.json();
+
+                // Update top batsmen
+                document.getElementById('topBatsmen').innerHTML = stats.topBatsmen.map(player => `
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <div class="font-medium">${player.name}</div>
+                            <div class="text-sm text-gray-500">${player.team}</div>
+                        </div>
+                        <div class="text-right">
+                            <div class="font-medium">${player.runs} runs</div>
+                            <div class="text-sm text-gray-500">Avg: ${player.average}</div>
+                        </div>
+                    </div>
+                `).join('');
+
+                // Update top bowlers
+                document.getElementById('topBowlers').innerHTML = stats.topBowlers.map(player => `
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <div class="font-medium">${player.name}</div>
+                            <div class="text-sm text-gray-500">${player.team}</div>
+                        </div>
+                        <div class="text-right">
+                            <div class="font-medium">${player.wickets} wickets</div>
+                            <div class="text-sm text-gray-500">Econ: ${player.economy}</div>
+                        </div>
+                    </div>
+                `).join('');
+
+                // Update team win rates
+                document.getElementById('teamWinRates').innerHTML = stats.teamWinRates.map(team => `
+                    <div class="flex justify-between items-center">
+                        <div class="font-medium">${team.name}</div>
+                        <div class="text-right">
+                            <div class="font-medium">${team.winRate}%</div>
+                            <div class="text-sm text-gray-500">${team.wins}/${team.matches}</div>
+                        </div>
+                    </div>
+                `).join('');
+
+                // Update tournament stats
+                document.getElementById('tournamentStats').innerHTML = `
+                    <div class="space-y-2">
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">Total Matches</span>
+                            <span class="font-medium">${stats.tournamentStats.totalMatches}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">Total Runs</span>
+                            <span class="font-medium">${stats.tournamentStats.totalRuns}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">Total Wickets</span>
+                            <span class="font-medium">${stats.tournamentStats.totalWickets}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">Highest Score</span>
+                            <span class="font-medium">${stats.tournamentStats.highestScore}</span>
+                        </div>
+                    </div>
+                `;
+
+                // Update batting stats table
+                document.getElementById('battingStatsTable').innerHTML = stats.battingStats.map(player => `
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm font-medium text-gray-900">${player.name}</div>
+                            <div class="text-sm text-gray-500">${player.team}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${player.matches}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${player.runs}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${player.average}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${player.strikeRate}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${player.fifties}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${player.hundreds}</td>
+                    </tr>
+                `).join('');
+
+                // Update bowling stats table
+                document.getElementById('bowlingStatsTable').innerHTML = stats.bowlingStats.map(player => `
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm font-medium text-gray-900">${player.name}</div>
+                            <div class="text-sm text-gray-500">${player.team}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${player.matches}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${player.wickets}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${player.average}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${player.economy}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${player.bestBowling}</td>
+                    </tr>
+                `).join('');
+
+                // Update charts
+                updateCharts(stats);
+            } catch (error) {
+                console.error('Failed to fetch statistics:', error);
+            }
+        }
+
+        // Update charts with new data
+        function updateCharts(stats) {
+            // Run Distribution Chart
+            new Chart(document.getElementById('runDistributionChart'), {
+                type: 'bar',
+                data: {
+                    labels: stats.runDistribution.labels,
+                    datasets: [{
+                        label: 'Runs',
+                        data: stats.runDistribution.data,
+                        backgroundColor: 'rgba(79, 70, 229, 0.2)',
+                        borderColor: 'rgba(79, 70, 229, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            // Wicket Distribution Chart
+            new Chart(document.getElementById('wicketDistributionChart'), {
+                type: 'bar',
+                data: {
+                    labels: stats.wicketDistribution.labels,
+                    datasets: [{
+                        label: 'Wickets',
+                        data: stats.wicketDistribution.data,
+                        backgroundColor: 'rgba(220, 38, 38, 0.2)',
+                        borderColor: 'rgba(220, 38, 38, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        // Fetch tournaments for filter
+        async function fetchTournaments() {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch('http://localhost:5000/api/tournaments', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const tournaments = await response.json();
+                
+                document.getElementById('tournamentSelect').innerHTML += tournaments.map(tournament => 
+                    `<option value="${tournament._id}">${tournament.name}</option>`
+                ).join('');
+            } catch (error) {
+                console.error('Failed to fetch tournaments:', error);
+            }
+        }
+
+        // Event Listeners
+        document.getElementById('tournamentSelect').addEventListener('change', fetchStatistics);
+
+        document.getElementById('exportStatsBtn').addEventListener('click', async () => {
+            try {
+                const token = localStorage.getItem('token');
+                const tournamentId = document.getElementById('tournamentSelect').value;
+                const response = await fetch(`http://localhost:5000/api/statistics/export${tournamentId ? `?tournament=${tournamentId}` : ''}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'cricket-statistics.csv';
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+            } catch (error) {
+                console.error('Failed to export statistics:', error);
+                alert('Failed to export statistics. Please try again.');
+            }
+        });
+
+        // Initial fetch
+        fetchTournaments();
+        fetchStatistics();
+    </script>
+</body>
+</html>
