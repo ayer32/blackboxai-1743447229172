@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Statistics - Cricket Tournament Manager</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <!-- Custom Styles -->
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+    </style>
+    
+    <!-- Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1e40af',
+                        secondary: '#1e293b',
+                        accent: '#3b82f6'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50">
+    <!-- Header/Navigation -->
+    <nav class="bg-primary text-white shadow-lg">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center space-x-4">
+                    <a href="/" class="text-2xl font-bold">Cricket Manager</a>
+                </div>
+                <div class="hidden md:flex items-center space-x-6">
+                    <a href="/tournaments" class="hover:text-accent transition">Tournaments</a>
+                    <a href="/teams" class="hover:text-accent transition">Teams</a>
+                    <a href="/matches" class="hover:text-accent transition">Matches</a>
+                    <a href="/stats" class="text-accent">Statistics</a>
+                    <button id="loginBtn" class="bg-accent hover:bg-blue-600 px-4 py-2 rounded-lg transition">Login</button>
+                </div>
+                <button class="md:hidden text-2xl">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <div class="bg-white shadow">
+        <div class="container mx-auto px-4 py-6">
+            <h1 class="text-3xl font-bold">Statistics</h1>
+        </div>
+    </div>
+
+    <!-- Statistics Categories -->
+    <div class="container mx-auto px-4 py-6">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <button class="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition text-left active">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-bat text-blue-500"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold">Batting</h3>
+                        <p class="text-sm text-gray-600">Top performers</p>
+                    </div>
+                </div>
+            </button>
+            <button class="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition text-left">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-bowling-ball text-green-500"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold">Bowling</h3>
+                        <p class="text-sm text-gray-600">Best figures</p>
+                    </div>
+                </div>
+            </button>
+            <button class="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition text-left">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-users text-purple-500"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold">Teams</h3>
+                        <p class="text-sm text-gray-600">Team rankings</p>
+                    </div>
+                </div>
+            </button>
+            <button class="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition text-left">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-trophy text-red-500"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold">Tournaments</h3>
+                        <p class="text-sm text-gray-600">Tournament stats</p>
+                    </div>
+                </div>
+            </button>
+        </div>
+    </div>
+
+    <!-- Statistics Content -->
+    <div class="container mx-auto px-4 py-6">
+        <!-- Batting Statistics -->
+        <div id="battingStats" class="bg-white rounded-lg shadow-md p-6 mb-6">
+            <h2 class="text-xl font-semibold mb-4">Batting Statistics</h2>
+            <div class="overflow-x-auto">
+                <table class="min-w-full">
+                    <thead>
+                        <tr class="bg-gray-50">
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Player</th>
+                            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Matches</th>
+                            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Runs</th>
+                            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Average</th>
+                            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Strike Rate</th>
+                            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">100s</th>
+                            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">50s</th>
+                        </tr>
+                    </thead>
+                    <tbody id="battingStatsBody" class="bg-white divide-y divide-gray-200">
+                        <!-- Batting statistics will be dynamically added here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Bowling Statistics -->
+        <div id="bowlingStats" class="bg-white rounded-lg shadow-md p-6 mb-6">
+            <h2 class="text-xl font-semibold mb-4">Bowling Statistics</h2>
+            <div class="overflow-x-auto">
+                <table class="min-w-full">
+                    <thead>
+                        <tr class="bg-gray-50">
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Player</th>
+                            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Matches</th>
+                            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Wickets</th>
+                            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Average</th>
+                            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Economy</th>
+                            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">5W</th>
+                            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Best</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bowlingStatsBody" class="bg-white divide-y divide-gray-200">
+                        <!-- Bowling statistics will be dynamically added here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Team Rankings -->
+        <div id="teamRankings" class="bg-white rounded-lg shadow-md p-6 mb-6">
+            <h2 class="text-xl font-semibold mb-4">Team Rankings</h2>
+            <div class="grid md:grid-cols-2 gap-6">
+                <div>
+                    <h3 class="font-semibold mb-3">Overall Rankings</h3>
+                    <div id="overallRankings" class="space-y-2">
+                        <!-- Overall rankings will be dynamically added here -->
+                    </div>
+                </div>
+                <div>
+                    <h3 class="font-semibold mb-3">Tournament-wise Rankings</h3>
+                    <div id="tournamentRankings" class="space-y-2">
+                        <!-- Tournament rankings will be dynamically added here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tournament Statistics -->
+        <div id="tournamentStats" class="bg-white rounded-lg shadow-md p-6">
+            <h2 class="text-xl font-semibold mb-4">Tournament Statistics</h2>
+            <div class="grid md:grid-cols-2 gap-6">
+                <div>
+                    <h3 class="font-semibold mb-3">Highest Team Scores</h3>
+                    <div id="highestTeamScores" class="space-y-2">
+                        <!-- Highest team scores will be dynamically added here -->
+                    </div>
+                </div>
+                <div>
+                    <h3 class="font-semibold mb-3">Best Match Performances</h3>
+                    <div id="bestMatchPerformances" class="space-y-2">
+                        <!-- Best match performances will be dynamically added here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/auth.js"></script>
+    <script src="js/statistics.js"></script>
+    <script>
+        // Mobile menu toggle
+        const mobileMenuBtn = document.querySelector('.md\\:hidden');
+        const mobileMenu = document.getElementById('mobileMenu');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Statistics category buttons
+        const categoryButtons = document.querySelectorAll('.grid button');
+        categoryButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Remove active class from all buttons
+                categoryButtons.forEach(btn => btn.classList.remove('ring-2', 'ring-accent'));
+                // Add active class to clicked button
+                button.classList.add('ring-2', 'ring-accent');
+            });
+        });
+    </script>
+</body>
+</html>
