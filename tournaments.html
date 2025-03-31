@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tournaments - Cricket Tournament Manager</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Sidebar -->
+    <div class="fixed inset-y-0 left-0 w-64 bg-indigo-700 text-white">
+        <div class="flex items-center justify-center h-16 bg-indigo-800">
+            <i class="fas fa-cricket text-2xl mr-2"></i>
+            <span class="font-bold text-xl">Cricket Manager</span>
+        </div>
+        <nav class="mt-5">
+            <a href="dashboard.html" class="flex items-center px-6 py-3 text-white hover:bg-indigo-600">
+                <i class="fas fa-tachometer-alt mr-3"></i>
+                Dashboard
+            </a>
+            <a href="tournaments.html" class="flex items-center px-6 py-3 bg-indigo-600">
+                <i class="fas fa-trophy mr-3"></i>
+                Tournaments
+            </a>
+            <a href="teams.html" class="flex items-center px-6 py-3 text-white hover:bg-indigo-600">
+                <i class="fas fa-users mr-3"></i>
+                Teams
+            </a>
+            <a href="players.html" class="flex items-center px-6 py-3 text-white hover:bg-indigo-600">
+                <i class="fas fa-running mr-3"></i>
+                Players
+            </a>
+            <a href="matches.html" class="flex items-center px-6 py-3 text-white hover:bg-indigo-600">
+                <i class="fas fa-baseball-ball mr-3"></i>
+                Matches
+            </a>
+            <a href="statistics.html" class="flex items-center px-6 py-3 text-white hover:bg-indigo-600">
+                <i class="fas fa-chart-bar mr-3"></i>
+                Statistics
+            </a>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="ml-64 p-8">
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-8">
+            <h1 class="text-2xl font-bold text-gray-800">Tournaments</h1>
+            <button id="createTournamentBtn" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-500">
+                Create Tournament
+            </button>
+        </div>
+
+        <!-- Filters -->
+        <div class="bg-white rounded-lg shadow p-6 mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Status</label>
+                    <select id="statusFilter" class="w-full border rounded-md px-3 py-2">
+                        <option value="">All</option>
+                        <option value="Draft">Draft</option>
+                        <option value="Registration">Registration</option>
+                        <option value="Ongoing">Ongoing</option>
+                        <option value="Completed">Completed</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Format</label>
+                    <select id="formatFilter" class="w-full border rounded-md px-3 py-2">
+                        <option value="">All</option>
+                        <option value="T20">T20</option>
+                        <option value="ODI">ODI</option>
+                        <option value="Test">Test</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Date Range</label>
+                    <input type="date" id="dateFilter" class="w-full border rounded-md px-3 py-2">
+                </div>
+                <div class="flex items-end">
+                    <button id="applyFilters" class="w-full px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200">
+                        Apply Filters
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tournaments List -->
+        <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+            <table class="min-w-full">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tournament</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Format</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Teams</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Dates</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="tournamentsList" class="bg-white divide-y divide-gray-200">
+                    <!-- Tournament rows will be dynamically added here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Create Tournament Modal -->
+    <div id="createTournamentModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full">
+        <div class="relative top-20 mx-auto p-5 border w-2/3 shadow-lg rounded-md bg-white">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-medium text-gray-900">Create Tournament</h3>
+                <button class="text-gray-400 hover:text-gray-500" onclick="closeModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="createTournamentForm" class="space-y-6">
+                <div class="grid grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Tournament Name</label>
+                        <input type="text" name="name" required class="w-full border rounded-md px-3 py-2">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Short Name</label>
+                        <input type="text" name="shortName" required class="w-full border rounded-md px-3 py-2"
+                               maxlength="4" placeholder="Max 4 characters">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Format</label>
+                        <select name="format" required class="w-full border rounded-md px-3 py-2">
+                            <option value="T20">T20</option>
+                            <option value="ODI">ODI</option>
+                            <option value="Test">Test</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Overs (per innings)</label>
+                        <input type="number" name="overs" required class="w-full border rounded-md px-3 py-2"
+                               min="1" max="50">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Start Date</label>
+                        <input type="date" name="startDate" required class="w-full border rounded-md px-3 py-2">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">End Date</label>
+                        <input type="date" name="endDate" required class="w-full border rounded-md px-3 py-2">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Point System</label>
+                    <div class="grid grid-cols-4 gap-4">
+                        <div>
+                            <label class="block text-xs text-gray-500 mb-1">Win Points</label>
+                            <input type="number" name="winPoints" required class="w-full border rounded-md px-3 py-2"
+                                   value="2" min="0">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-500 mb-1">Loss Points</label>
+                            <input type="number" name="lossPoints" required class="w-full border rounded-md px-3 py-2"
+                                   value="0" min="0">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-500 mb-1">Tie Points</label>
+                            <input type="number" name="tiePoints" required class="w-full border rounded-md px-3 py-2"
+                                   value="1" min="0">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-500 mb-1">No Result Points</label>
+                            <input type="number" name="noResultPoints" required class="w-full border rounded-md px-3 py-2"
+                                   value="1" min="0">
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Venues</label>
+                    <div id="venuesList" class="space-y-4">
+                        <div class="grid grid-cols-3 gap-4">
+                            <input type="text" name="venues[0].ground" placeholder="Ground Name" required
+                                   class="w-full border rounded-md px-3 py-2">
+                            <input type="text" name="venues[0].city" placeholder="City" required
+                                   class="w-full border rounded-md px-3 py-2">
+                            <input type="text" name="venues[0].country" placeholder="Country" required
+                                   class="w-full border rounded-md px-3 py-2">
+                        </div>
+                    </div>
+                    <button type="button" onclick="addVenue()"
+                            class="mt-2 text-sm text-indigo-600 hover:text-indigo-500">
+                        + Add Another Venue
+                    </button>
+                </div>
+
+                <div class="flex justify-end space-x-4">
+                    <button type="button" onclick="closeModal()"
+                            class="px-4 py-2 border text-gray-700 rounded-md hover:bg-gray-50">
+                        Cancel
+                    </button>
+                    <button type="submit"
+                            class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-500">
+                        Create Tournament
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+    <script>
+        // Check authentication
+        if (!window.auth.isAuthenticated()) {
+            window.location.href = 'index.html';
+        }
+
+        // Modal functions
+        function openModal() {
+            document.getElementById('createTournamentModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('createTournamentModal').classList.add('hidden');
+        }
+
+        let venueCount = 1;
+        function addVenue() {
+            const venuesList = document.getElementById('venuesList');
+            const venueDiv = document.createElement('div');
+            venueDiv.className = 'grid grid-cols-3 gap-4';
+            venueDiv.innerHTML = `
+                <input type="text" name="venues[${venueCount}].ground" placeholder="Ground Name" required
+                       class="w-full border rounded-md px-3 py-2">
+                <input type="text" name="venues[${venueCount}].city" placeholder="City" required
+                       class="w-full border rounded-md px-3 py-2">
+                <input type="text" name="venues[${venueCount}].country" placeholder="Country" required
+                       class="w-full border rounded-md px-3 py-2">
+            `;
+            venuesList.appendChild(venueDiv);
+            venueCount++;
+        }
+
+        // Event Listeners
+        document.getElementById('createTournamentBtn').addEventListener('click', openModal);
+
+        document.getElementById('createTournamentForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const venues = [];
+            for (let i = 0; i < venueCount; i++) {
+                venues.push({
+                    ground: formData.get(`venues[${i}].ground`),
+                    city: formData.get(`venues[${i}].city`),
+                    country: formData.get(`venues[${i}].country`)
+                });
+            }
+
+            const tournamentData = {
+                name: formData.get('name'),
+                shortName: formData.get('shortName'),
+                format: formData.get('format'),
+                overs: parseInt(formData.get('overs')),
+                startDate: formData.get('startDate'),
+                endDate: formData.get('endDate'),
+                pointsSystem: {
+                    win: parseInt(formData.get('winPoints')),
+                    loss: parseInt(formData.get('lossPoints')),
+                    tie: parseInt(formData.get('tiePoints')),
+                    noResult: parseInt(formData.get('noResultPoints'))
+                },
+                venues: venues
+            };
+
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch('http://localhost:5000/api/tournaments', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(tournamentData)
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to create tournament');
+                }
+
+                closeModal();
+                fetchTournaments();
+            } catch (error) {
+                console.error('Failed to create tournament:', error);
+                alert('Failed to create tournament. Please try again.');
+            }
+        });
+
+        // Fetch and display tournaments
+        async function fetchTournaments() {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch('http://localhost:5000/api/tournaments', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+                
+                const tournamentsList = document.getElementById('tournamentsList');
+                tournamentsList.innerHTML = data.map(tournament => `
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm font-medium text-gray-900">${tournament.name}</div>
+                            <div class="text-sm text-gray-500">${tournament.shortName}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-900">${tournament.format}</div>
+                            <div class="text-sm text-gray-500">${tournament.overs} overs</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            ${tournament.teams.length} teams
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-900">${new Date(tournament.startDate).toLocaleDateString()}</div>
+                            <div class="text-sm text-gray-500">to ${new Date(tournament.endDate).toLocaleDateString()}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                                ${tournament.status === 'Ongoing' ? 'bg-green-100 text-green-800' :
+                                  tournament.status === 'Completed' ? 'bg-gray-100 text-gray-800' :
+                                  tournament.status === 'Registration' ? 'bg-yellow-100 text-yellow-800' :
+                                  'bg-blue-100 text-blue-800'}">
+                                ${tournament.status}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <a href="#" class="text-indigo-600 hover:text-indigo-900 mr-3">View</a>
+                            <a href="#" class="text-indigo-600 hover:text-indigo-900">Edit</a>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (error) {
+                console.error('Failed to fetch tournaments:', error);
+            }
+        }
+
+        // Initial fetch
+        fetchTournaments();
+
+        // Filter functionality
+        document.getElementById('applyFilters').addEventListener('click', () => {
+            const status = document.getElementById('statusFilter').value;
+            const format = document.getElementById('formatFilter').value;
+            const date = document.getElementById('dateFilter').value;
+            
+            fetchTournaments({ status, format, date });
+        });
+    </script>
+</body>
+</html>
