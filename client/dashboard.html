@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Cricket Tournament Manager</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <!-- Custom Styles -->
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+    </style>
+    
+    <!-- Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1e40af',
+                        secondary: '#1e293b',
+                        accent: '#3b82f6'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50">
+    <!-- Header/Navigation -->
+    <nav class="bg-primary text-white shadow-lg">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center space-x-4">
+                    <a href="/" class="text-2xl font-bold">Cricket Manager</a>
+                </div>
+                <div class="hidden md:flex items-center space-x-6">
+                    <a href="/tournaments" class="hover:text-accent transition">Tournaments</a>
+                    <a href="/teams" class="hover:text-accent transition">Teams</a>
+                    <a href="/matches" class="hover:text-accent transition">Matches</a>
+                    <a href="/stats" class="hover:text-accent transition">Statistics</a>
+                    <button id="loginBtn" class="bg-accent hover:bg-blue-600 px-4 py-2 rounded-lg transition">Login</button>
+                </div>
+                <button class="md:hidden text-2xl">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Dashboard Header -->
+    <div class="bg-white shadow">
+        <div class="container mx-auto px-4 py-6">
+            <div class="flex justify-between items-center">
+                <h1 class="text-3xl font-bold">Dashboard</h1>
+                <div class="flex space-x-4">
+                    <button class="bg-accent text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition">
+                        <i class="fas fa-bell mr-2"></i>Notifications
+                    </button>
+                    <button class="bg-secondary text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition">
+                        <i class="fas fa-cog mr-2"></i>Settings
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="container mx-auto px-4 py-8">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500">Active Tournaments</p>
+                        <h3 class="text-3xl font-bold" id="activeTournamentsCount">0</h3>
+                    </div>
+                    <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-trophy text-blue-500 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500">Live Matches</p>
+                        <h3 class="text-3xl font-bold" id="liveMatchesCount">0</h3>
+                    </div>
+                    <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-cricket-bat-ball text-red-500 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500">Total Teams</p>
+                        <h3 class="text-3xl font-bold" id="totalTeamsCount">0</h3>
+                    </div>
+                    <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-users text-green-500 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500">Total Players</p>
+                        <h3 class="text-3xl font-bold" id="totalPlayersCount">0</h3>
+                    </div>
+                    <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-user text-purple-500 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activity & Upcoming Matches -->
+    <div class="container mx-auto px-4 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Recent Activity -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-xl font-semibold mb-4">Recent Activity</h2>
+                <div class="space-y-4" id="recentActivity">
+                    <!-- Activity items will be dynamically added here -->
+                </div>
+            </div>
+
+            <!-- Upcoming Matches -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-xl font-semibold mb-4">Upcoming Matches</h2>
+                <div class="space-y-4" id="upcomingMatches">
+                    <!-- Matches will be dynamically added here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tournament Progress & Team Performance -->
+    <div class="container mx-auto px-4 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Tournament Progress -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-xl font-semibold mb-4">Tournament Progress</h2>
+                <div id="tournamentProgress">
+                    <!-- Tournament progress will be dynamically added here -->
+                </div>
+            </div>
+
+            <!-- Team Performance -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-xl font-semibold mb-4">Team Performance</h2>
+                <div id="teamPerformance">
+                    <!-- Team performance chart will be dynamically added here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/auth.js"></script>
+    <script src="js/dashboard.js"></script>
+    <script>
+        // Mobile menu toggle
+        const mobileMenuBtn = document.querySelector('.md\\:hidden');
+        const mobileMenu = document.getElementById('mobileMenu');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+    </script>
+</body>
+</html>
