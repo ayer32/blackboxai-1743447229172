@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tournaments - Cricket Tournament Manager</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <!-- Custom Styles -->
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+    </style>
+    
+    <!-- Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1e40af',
+                        secondary: '#1e293b',
+                        accent: '#3b82f6'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50">
+    <!-- Header/Navigation -->
+    <nav class="bg-primary text-white shadow-lg">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center space-x-4">
+                    <a href="/" class="text-2xl font-bold">Cricket Manager</a>
+                </div>
+                <div class="hidden md:flex items-center space-x-6">
+                    <a href="/tournaments" class="text-accent">Tournaments</a>
+                    <a href="/teams" class="hover:text-accent transition">Teams</a>
+                    <a href="/matches" class="hover:text-accent transition">Matches</a>
+                    <a href="/stats" class="hover:text-accent transition">Statistics</a>
+                    <button id="loginBtn" class="bg-accent hover:bg-blue-600 px-4 py-2 rounded-lg transition">Login</button>
+                </div>
+                <button class="md:hidden text-2xl">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <div class="bg-white shadow">
+        <div class="container mx-auto px-4 py-6">
+            <div class="flex justify-between items-center">
+                <h1 class="text-3xl font-bold">Tournaments</h1>
+                <button id="createTournamentBtn" class="bg-accent text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition">
+                    <i class="fas fa-plus mr-2"></i>Create Tournament
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="container mx-auto px-4 py-6">
+        <div class="bg-white rounded-lg shadow p-4">
+            <div class="grid md:grid-cols-4 gap-4">
+                <div>
+                    <label class="block text-gray-700 mb-2">Status</label>
+                    <select id="statusFilter" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent">
+                        <option value="">All</option>
+                        <option value="Upcoming">Upcoming</option>
+                        <option value="Ongoing">Ongoing</option>
+                        <option value="Completed">Completed</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-gray-700 mb-2">Format</label>
+                    <select id="formatFilter" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent">
+                        <option value="">All</option>
+                        <option value="T20">T20</option>
+                        <option value="ODI">ODI</option>
+                        <option value="Test">Test</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-gray-700 mb-2">Date Range</label>
+                    <input type="date" id="dateFilter" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent">
+                </div>
+                <div class="flex items-end">
+                    <button id="applyFilters" class="w-full bg-secondary text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition">
+                        Apply Filters
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tournaments List -->
+    <div class="container mx-auto px-4 py-6">
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6" id="tournamentsList">
+            <!-- Tournament cards will be dynamically added here -->
+        </div>
+    </div>
+
+    <!-- Create Tournament Modal -->
+    <div id="createTournamentModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+        <div class="bg-white rounded-lg p-8 max-w-2xl w-full mx-4">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold">Create Tournament</h2>
+                <button class="text-gray-500 hover:text-gray-700" onclick="closeModal('createTournamentModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="createTournamentForm" class="space-y-4">
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-gray-700 mb-2">Tournament Name</label>
+                        <input type="text" name="name" required
+                            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent">
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 mb-2">Short Name</label>
+                        <input type="text" name="shortName" required maxlength="10"
+                            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent">
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 mb-2">Start Date</label>
+                        <input type="date" name="startDate" required
+                            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent">
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 mb-2">End Date</label>
+                        <input type="date" name="endDate" required
+                            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent">
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 mb-2">Format</label>
+                        <select name="format" required
+                            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent">
+                            <option value="T20">T20</option>
+                            <option value="ODI">ODI</option>
+                            <option value="Test">Test</option>
+                            <option value="Mixed">Mixed</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 mb-2">Type</label>
+                        <select name="type" required
+                            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent">
+                            <option value="League">League</option>
+                            <option value="Knockout">Knockout</option>
+                            <option value="League + Knockout">League + Knockout</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-gray-700 mb-2">Teams</label>
+                    <div id="teamsList" class="grid md:grid-cols-3 gap-2">
+                        <!-- Teams checkboxes will be dynamically added here -->
+                    </div>
+                </div>
+                <div id="createTournamentError" class="hidden text-red-500 text-sm"></div>
+                <button type="submit"
+                    class="w-full bg-accent text-white py-2 rounded-lg hover:bg-blue-600 transition">
+                    Create Tournament
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Tournament Details Modal -->
+    <div id="tournamentDetailsModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+        <div class="bg-white rounded-lg p-8 max-w-4xl w-full mx-4">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold" id="tournamentDetailsTitle"></h2>
+                <button class="text-gray-500 hover:text-gray-700" onclick="closeModal('tournamentDetailsModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="space-y-6">
+                <!-- Tournament Info -->
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div>
+                        <h3 class="font-semibold mb-2">Tournament Details</h3>
+                        <div id="tournamentInfo" class="space-y-2"></div>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold mb-2">Point Table</h3>
+                        <div id="pointTable" class="overflow-x-auto"></div>
+                    </div>
+                </div>
+                
+                <!-- Matches -->
+                <div>
+                    <h3 class="font-semibold mb-2">Matches</h3>
+                    <div id="tournamentMatches" class="space-y-2"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/auth.js"></script>
+    <script src="js/tournaments.js"></script>
+    <script>
+        // Mobile menu toggle
+        const mobileMenuBtn = document.querySelector('.md\\:hidden');
+        const mobileMenu = document.getElementById('mobileMenu');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+        }
+
+        // Close modals when clicking outside
+        document.querySelectorAll('.fixed').forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeModal(modal.id);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
